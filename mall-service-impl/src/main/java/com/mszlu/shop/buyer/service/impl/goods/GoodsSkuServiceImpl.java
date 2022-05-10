@@ -42,7 +42,7 @@ public class GoodsSkuServiceImpl implements GoodsSkuService {
     private ElasticsearchRestTemplate elasticsearchTemplate;
 
     @Override
-    public Result<Map<String, Object>> getGoodsSkuDetail(String goodsId, String skuId) {
+    public Result<GoodsDetailVo> getGoodsSkuDetail(String goodsId, String skuId) {
         /**
          * 目的：GoodsDetailVo
          * 1. 根据skuid 查询 goodsSku表 ，转换为GoodsSkuVO对象
@@ -128,7 +128,10 @@ public class GoodsSkuServiceImpl implements GoodsSkuService {
         //一个商品 会对应多个sku
         LambdaQueryWrapper<GoodsSku> queryWrapper1 = new LambdaQueryWrapper<>();
         List<GoodsSku> goodsSkusList = goodsSkuMapper.selectList(queryWrapper1);
-        for (GoodsSku goodsSku : goodsSkusList) {
+        System.out.println("goodsSkusList.size:" + goodsSkusList.size());
+
+        for (int i = 205; i < 220; i++) {
+            GoodsSku goodsSku = goodsSkusList.get(i);
             EsGoodsIndex esGoodsIndex = new EsGoodsIndex();
             BeanUtils.copyProperties(goodsSku,esGoodsIndex);
 
@@ -141,6 +144,20 @@ public class GoodsSkuServiceImpl implements GoodsSkuService {
             }
             elasticsearchTemplate.save(esGoodsIndex);
         }
+
+//        for (GoodsSku goodsSku : goodsSkusList) {
+//            EsGoodsIndex esGoodsIndex = new EsGoodsIndex();
+//            BeanUtils.copyProperties(goodsSku,esGoodsIndex);
+//
+//            esGoodsIndex.setId(goodsSku.getId().toString());
+//            esGoodsIndex.setGoodsId(goodsSku.getGoodsId().toString());
+//            esGoodsIndex.setPrice(goodsSku.getPrice().doubleValue());
+//            BigDecimal promotionPrice = goodsSku.getPromotionPrice();
+//            if (promotionPrice != null) {
+//                esGoodsIndex.setPromotionPrice(promotionPrice.doubleValue());
+//            }
+//            elasticsearchTemplate.save(esGoodsIndex);
+//        }
     }
 
 
